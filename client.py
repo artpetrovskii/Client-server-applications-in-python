@@ -28,7 +28,7 @@ def process_ans(message):
 
 
 def main():
-    # client.py 192.168.1.2 8079
+    # client.py 95.161.223.252 34828
     try:
         server_address = sys.argv[1]
         server_port = int(sys.argv[2])
