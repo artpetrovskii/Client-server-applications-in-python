@@ -49,9 +49,10 @@ def main():
     while True:
         client, client_address = transport.accept()
         try:
-            message_from_client = get_message(client)
-            print(message_from_client)
-            response = process_client_message(message_from_client)
+            message_from_cient = get_message(client)
+            print(message_from_cient)
+            # {'action': 'presence', 'time': 1573760672.167031, 'user': {'account_name': 'Guest'}}
+            response = process_client_message(message_from_cient)
             send_message(client, response)
             client.close()
         except (ValueError, json.JSONDecodeError):

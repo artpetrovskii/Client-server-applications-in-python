@@ -8,6 +8,7 @@ from common.utils import get_message, send_message
 
 
 def create_presence(account_name='Guest'):
+    # {'action': 'presence', 'time': 1573760672.167031, 'user': {'account_name': 'Guest'}}
     out = {
         ACTION: PRESENCE,
         TIME: time.time(),
@@ -27,6 +28,7 @@ def process_ans(message):
 
 
 def main():
+    # client.py 95.161.223.252 34828
     try:
         server_address = sys.argv[1]
         server_port = int(sys.argv[2])
