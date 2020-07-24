@@ -1,11 +1,13 @@
+from common.variables import RESPONSE, ERROR, USER, ACCOUNT_NAME, TIME, ACTION, PRESENCE
+from client import create_presence, process_ans
 import sys
 import os
 import unittest
 sys.path.append(os.path.join(os.getcwd(), '..'))
-from common.variables import RESPONSE, ERROR, USER, ACCOUNT_NAME, TIME, ACTION, PRESENCE
-from client import create_presence, process_ans
+
 
 class TestClass(unittest.TestCase):
+    
     def test_def_presense(self):
         test = create_presence()
         test[TIME] = 1.1
