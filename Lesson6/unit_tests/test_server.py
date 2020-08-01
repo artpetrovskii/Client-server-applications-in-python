@@ -37,5 +37,6 @@ class TestServer(unittest.TestCase):
         self.assertEqual(process_client_message(
             {ACTION: PRESENCE, TIME: '1.1'}), self.err_dict)
 
+
 if __name__ == '__main__':
     unittest.main()
