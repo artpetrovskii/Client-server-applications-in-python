@@ -70,5 +70,6 @@ def main():
                           f'Соединение закрывается.')
             client.close()
 
+
 if __name__ == '__main__':
     main()
