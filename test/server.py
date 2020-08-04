@@ -1,3 +1,8 @@
+from common.variables import DEFAULT_PORT, MAX_CONNECTIONS, ACTION, \
+                             TIME, USER, ACCOUNT_NAME, SENDER, PRESENCE, \
+                             RESPONSE, ERROR, MESSAGE, MESSAGE_TEXT
+from common.utils import get_message, send_message
+from decos import log
 import socket
 import sys
 import argparse
@@ -5,18 +10,13 @@ import logging
 import select
 import time
 import logs.config_server_log
-from common.variables import DEFAULT_PORT, MAX_CONNECTIONS, ACTION, TIME, USER, \
-    ACCOUNT_NAME, SENDER, PRESENCE, RESPONSE, ERROR, MESSAGE, MESSAGE_TEXT
-from common.utils import get_message, send_message
-from decos import log
 
 
-LOGGER = logging.getLogger('server')
-
+loggers = logging.getLogger('server')
 
 @log
 def process_client_message(message, messages_list, client):
-    LOGGER.debug(f'Разбор сообщения от клиента : {message}')
+    loggers.debug(f'Разбор сообщения от клиента : {message}')
 
     if ACTION in message and message[ACTION] == PRESENCE and TIME in message \
             and USER in message and message[USER][ACCOUNT_NAME] == 'Guest':
@@ -35,9 +35,8 @@ def process_client_message(message, messages_list, client):
         })
         return
 
-
 @log
-def arg_parser():
+def create_argument_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', default=DEFAULT_PORT, type=int, nargs='?')
     parser.add_argument('-a', default='', nargs='?')
@@ -46,21 +45,17 @@ def arg_parser():
     listen_port = namespace.p
 
     if not 1023 < listen_port < 65536:
-        LOGGER.critical(
-            f'Попытка запуска сервера с указанием неподходящего порта '
-            f'{listen_port}. Допустимы адреса с 1024 до 65535.')
+        loggers.critical(f'Попытка запуска сервера с указанием неподходящего порта '
+                         f'{listen_port}. Допустимы адреса с 1024 до 65535.')
         sys.exit(1)
 
     return listen_address, listen_port
 
-
 def main():
-    listen_address, listen_port = arg_parser()
-
-    LOGGER.info(
-        f'Запущен сервер, порт для подключений: {listen_port}, '
-        f'адрес с которого принимаются подключения: {listen_address}. '
-        f'Если адрес не указан, принимаются соединения с любых адресов.')
+    listen_address, listen_port = create_argument_parser()
+    loggers.info(f'Запущен сервер, порт для подключений: {listen_port}, '
+                 f'адрес с которого принимаются подключения: {listen_address}. '
+                 f'Если адрес не указан, принимаются соединения с любых адресов.')
 
     transport = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     transport.bind((listen_address, listen_port))
@@ -75,7 +70,7 @@ def main():
         except OSError:
             pass
         else:
-            LOGGER.info(f'Установлено соедение с ПК {client_address}')
+            loggers.info(f'Установлено соедение с ПК {client_address}')
             clients.append(client)
 
         recv_data_lst = []
@@ -92,8 +87,8 @@ def main():
                     process_client_message(get_message(client_with_message),
                                            messages, client_with_message)
                 except:
-                    LOGGER.info(f'Клиент {client_with_message.getpeername()} '
-                                f'отключился от сервера.')
+                    loggers.info(f'Клиент {client_with_message.getpeername()} '
+                                 f'отключился от сервера.')
                     clients.remove(client_with_message)
         if messages and send_data_lst:
             message = {
@@ -107,7 +102,7 @@ def main():
                 try:
                     send_message(waiting_client, message)
                 except:
-                    LOGGER.info(f'Клиент {waiting_client.getpeername()} отключился от сервера.')
+                    loggers.info(f'Клиент {waiting_client.getpeername()} отключился от сервера.')
                     clients.remove(waiting_client)
 
 

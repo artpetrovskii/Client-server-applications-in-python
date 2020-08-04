@@ -11,7 +11,7 @@ MAX_PACKAGE_LENGTH = 1024
 # Кодировка проекта
 ENCODING = 'utf-8'
 # Текущий уровень логирования
-LOGGING_LEVEL = logging.DEBUG
+LEVEL_LOGGING = logging.DEBUG
 
 # Прококол JIM основные ключи:
 ACTION = 'action'

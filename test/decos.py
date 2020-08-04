@@ -1,19 +1,32 @@
 import sys
 import logging
-import logs.config_server_log
+import inspect
+import traceback
 import logs.config_client_log
-
+import logs.config_server_log
 
 if sys.argv[0].find('client') == -1:
-    LOGGER = logging.getLogger('server')
+    loggers = logging.getLogger('server')
 else:
-    LOGGER = logging.getLogger('client')
+    loggers = logging.getLogger('client')
 
-
-def log(func_to_log):
-    def log_saver(*args, **kwargs):
-        ret = func_to_log(*args, **kwargs)
-        LOGGER.debug(f'Была вызвана функция {func_to_log.__name__} c параметрами {args}, {kwargs}. '
-                     f'Вызов из модуля {func_to_log.__module__}')
+def log(logging_function):
+    def logging_saver(*args, **kwargs):
+        ret = logging_function(*args, **kwargs)
+        loggers.debug(f'Вызов функции {logging_function.__name__} c параметрами {args}, {kwargs}. '
+                      f'Вызов из модуля {logging_function.__module__}. Вызов из'
+                      f' функции {traceback.format_stack()[0].strip().split()[-1]}.'
+                      f'Вызов из функции {inspect.stack()[1][3]}')
         return ret
-    return log_saver
+    return logging_saver
+
+class Log:
+    def __call__(self, logging_function):
+        def logging_saver(*args, **kwargs):
+            ret = logging_function(*args, **kwargs)
+            loggers.debug(f'Вызов функции {logging_function.__name__} c параметрами {args}, {kwargs}. '
+                          f'Вызов из модуля {logging_function.__module__}. Вызов из'
+                          f' функции {traceback.format_stack()[0].strip().split()[-1]}.'
+                          f'Вызов из функции {inspect.stack()[1][3]}')
+            return ret
+        return logging_saver

@@ -1,7 +1,6 @@
-class IncorrectDataRecivedError(Exception):
+class IncorrectDataReceived(Exception):
     def __str__(self):
         return 'Принято некорректное сообщение от удалённого компьютера.'
-
 
 class ServerError(Exception):
     def __init__(self, text):
@@ -10,13 +9,11 @@ class ServerError(Exception):
     def __str__(self):
         return self.text
 
-
-class NonDictInputError(Exception):
+class NoDictInput(Exception):
     def __str__(self):
         return 'Аргумент функции должен быть словарём.'
 
-
-class ReqFieldMissingError(Exception):
+class MissingRequiredField(Exception):
     def __init__(self, missing_field):
         self.missing_field = missing_field
 

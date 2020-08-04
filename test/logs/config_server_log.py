@@ -1,28 +1,28 @@
+from common.variables import LEVEL_LOGGING
 import sys
 import os
-import logging
 import logging.handlers
-from common.variables import LOGGING_LEVEL
 sys.path.append('../')
 
-SERVER_FORMATTER = logging.Formatter('%(asctime)s %(levelname)s %(filename)s %(message)s')
+formatting_server = logging.Formatter('%(asctime)s %(levelname)s %(filename)s %(message)s')
 
-PATH = os.path.dirname(os.path.abspath(__file__))
-PATH = os.path.join(PATH, 'server.log')
+file_path = os.path.dirname(os.path.abspath(__file__))
+file_path = os.path.join(file_path, 'server.log')
 
-STREAM_HANDLER = logging.StreamHandler(sys.stderr)
-STREAM_HANDLER.setFormatter(SERVER_FORMATTER)
-STREAM_HANDLER.setLevel(logging.ERROR)
-LOG_FILE = logging.handlers.TimedRotatingFileHandler(PATH, encoding='utf8', interval=1, when='D')
-LOG_FILE.setFormatter(SERVER_FORMATTER)
+handling_stream = logging.StreamHandler(sys.stderr)
+handling_stream.setLevel(logging.ERROR)
+handling_stream.setFormatter(formatting_server)
 
-LOGGER = logging.getLogger('server')
-LOGGER.addHandler(STREAM_HANDLER)
-LOGGER.addHandler(LOG_FILE)
-LOGGER.setLevel(LOGGING_LEVEL)
+file_logs = logging.handlers.TimedRotatingFileHandler(file_path, encoding='utf8', interval=1, when='D')
+file_logs.setFormatter(formatting_server)
+
+loggers = logging.getLogger('server')
+loggers.setLevel(LEVEL_LOGGING)
+loggers.addHandler(file_logs)
+loggers.addHandler(handling_stream)
 
 if __name__ == '__main__':
-    LOGGER.critical('Критическая ошибка')
-    LOGGER.error('Ошибка')
-    LOGGER.debug('Отладочная информация')
-    LOGGER.info('Информационное сообщение')
+    loggers.error('Ошибка')
+    loggers.critical('Критическая ошибка')
+    loggers.info('Сообщение с информацией')
+    loggers.debug('Информация по отладке')
