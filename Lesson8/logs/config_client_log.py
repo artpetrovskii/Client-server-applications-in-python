@@ -5,7 +5,8 @@ from common.variables import LOGGING_LEVEL
 sys.path.append('../')
 
 
-CLIENT_FORMATTER = logging.Formatter('%(asctime)s %(levelname)s %(filename)s %(message)s')
+CLIENT_FORMATTER = logging.Formatter('%(asctime)s %(levelname)s '
+                                     '%(filename)s %(message)s')
 
 PATH = os.path.dirname(os.path.abspath(__file__))
 PATH = os.path.join(PATH, 'client.log')
