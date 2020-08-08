@@ -50,14 +50,15 @@ def process_client_message(message, messages_list, client, clients, names):
 def process_message(message, names, listen_socks):
     if message[DESTINATION] in names and names[message[DESTINATION]] in listen_socks:
         send_message(names[message[DESTINATION]], message)
-        LOGGER.info(f'Отправлено сообщение пользователю {message[DESTINATION]} '
+        LOGGER.info(f'Отправлено сообщение пользователю '
+                    '{message[DESTINATION]} '
                     f'от пользователя {message[SENDER]}.')
     elif message[DESTINATION] in names and names[message[DESTINATION]] not in listen_socks:
         raise ConnectionError
     else:
-        LOGGER.error(
-            f'Пользователь {message[DESTINATION]} не зарегистрирован на сервере, '
-            f'отправка сообщения невозможна.')
+        LOGGER.error(f'Пользователь {message[DESTINATION]} '
+                     'не зарегистрирован на сервере, '
+                     f'отправка сообщения невозможна.')
 
 
 @log
@@ -70,9 +71,9 @@ def arg_parser():
     listen_port = namespace.p
 
     if not 1023 < listen_port < 65536:
-        LOGGER.critical(
-            f'Попытка запуска сервера с указанием неподходящего порта {listen_port}. '
-            f'Допустимы адреса с 1024 до 65535.')
+        LOGGER.critical(f'Попытка запуска сервера с указанием '
+                        'неподходящего порта {listen_port}. '
+                        f'Допустимы адреса с 1024 до 65535.')
         sys.exit(1)
 
     return listen_address, listen_port
@@ -108,7 +109,8 @@ def main():
         err_lst = []
         try:
             if clients:
-                recv_data_lst, send_data_lst, err_lst = select.select(clients, clients, [], 0)
+                recv_data_lst, send_data_lst,
+                err_lst = select.select(clients, clients, [], 0)
         except OSError:
             pass
 
@@ -116,7 +118,8 @@ def main():
             for client_with_message in recv_data_lst:
                 try:
                     process_client_message(get_message(client_with_message),
-                                           messages, client_with_message, clients, names)
+                                           messages, client_with_message,
+                                           clients, names)
                 except Exception:
                     LOGGER.info(f'Клиент {client_with_message.getpeername()} '
                                 f'отключился от сервера.')
@@ -126,7 +129,8 @@ def main():
             try:
                 process_message(i, names, send_data_lst)
             except Exception:
-                LOGGER.info(f'Связь с клиентом с именем {i[DESTINATION]} была потеряна')
+                LOGGER.info(f'Связь с клиентом с именем '
+                            '{i[DESTINATION]} была потеряна')
                 clients.remove(names[i[DESTINATION]])
                 del names[i[DESTINATION]]
         messages.clear()
