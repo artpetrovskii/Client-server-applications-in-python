@@ -34,7 +34,8 @@ def message_from_server(sock, my_username):
             message = get_message(sock)
             if ACTION in message and message[ACTION] == MESSAGE and \
                     SENDER in message and DESTINATION in message \
-                    and MESSAGE_TEXT in message and message[DESTINATION] == my_username:
+                    and MESSAGE_TEXT in message and message[DESTINATION]\
+                    == my_username:
                 print(f'\nПолучено сообщение от пользователя '
                       '{message[SENDER]}:'
                       f'\n{message[MESSAGE_TEXT]}')
@@ -85,7 +86,6 @@ def user_interactive(sock, username):
             send_message(sock, create_exit_message(username))
             print('Завершение соединения.')
             LOGGER.info('Завершение работы по команде пользователя.')
-            # Задержка неоходима, чтобы успело уйти сообщение о выходе
             time.sleep(0.5)
             break
         else:
