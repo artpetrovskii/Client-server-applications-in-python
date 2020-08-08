@@ -68,7 +68,7 @@ def create_message(sock, account_name='Guest'):
     try:
         send_message(sock, message_dict)
         LOGGER.info(f'Отправлено сообщение для пользователя {to_user}')
-    except:
+    except create_message:
         LOGGER.critical('Потеряно соединение с сервером.')
         sys.exit(1)
 
