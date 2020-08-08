@@ -10,7 +10,8 @@ from common.variables import DEFAULT_PORT, DEFAULT_IP_ADDRESS, ACTION, \
     TIME, USER, ACCOUNT_NAME, SENDER, PRESENCE, RESPONSE, \
     ERROR, MESSAGE, MESSAGE_TEXT, DESTINATION, EXIT
 from common.utils import get_message, send_message
-from errors import IncorrectDataReceivedError, ReqFieldMissingError, ServerError
+from errors import IncorrectDataReceivedError, ReqFieldMissingError, \
+                   ServerError
 from decos import log
 
 
@@ -34,12 +35,15 @@ def message_from_server(sock, my_username):
             if ACTION in message and message[ACTION] == MESSAGE and \
                     SENDER in message and DESTINATION in message \
                     and MESSAGE_TEXT in message and message[DESTINATION] == my_username:
-                print(f'\nПолучено сообщение от пользователя {message[SENDER]}:'
+                print(f'\nПолучено сообщение от пользователя '
+                      '{message[SENDER]}:'
                       f'\n{message[MESSAGE_TEXT]}')
-                LOGGER.info(f'Получено сообщение от пользователя {message[SENDER]}:'
+                LOGGER.info(f'Получено сообщение от пользователя '
+                            '{message[SENDER]}:'
                             f'\n{message[MESSAGE_TEXT]}')
             else:
-                LOGGER.error(f'Получено некорректное сообщение с сервера: {message}')
+                LOGGER.error(f'Получено некорректное сообщение '
+                             'с сервера: {message}')
         except IncorrectDataReceivedError:
             LOGGER.error(f'Не удалось декодировать полученное сообщение.')
         except (OSError, ConnectionError, ConnectionAbortedError,
@@ -85,7 +89,8 @@ def user_interactive(sock, username):
             time.sleep(0.5)
             break
         else:
-            print('Команда не распознана, попробойте снова. help - вывести поддерживаемые команды.')
+            print('Команда не распознана, попробойте снова. '
+                  'help - вывести поддерживаемые команды.')
 
 
 @log
@@ -97,13 +102,15 @@ def create_presence(account_name):
             ACCOUNT_NAME: account_name
         }
     }
-    LOGGER.debug(f'Сформировано {PRESENCE} сообщение для пользователя {account_name}')
+    LOGGER.debug(f'Сформировано {PRESENCE} сообщение '
+                 'для пользователя {account_name}')
     return out
 
 
 def print_help():
     print('Поддерживаемые команды:')
-    print('message - отправить сообщение. Кому и текст будет запрошены отдельно.')
+    print('message - отправить сообщение. '
+          'Кому и текст будет запрошены отдельно.')
     print('help - вывести подсказки по командам')
     print('exit - выход из программы')
 
@@ -131,9 +138,10 @@ def arg_parser():
     client_name = namespace.name
 
     if not 1023 < server_port < 65536:
-        LOGGER.critical(
-            f'Попытка запуска клиента с неподходящим номером порта: {server_port}. '
-            f'Допустимы адреса с 1024 до 65535. Клиент завершается.')
+        LOGGER.critical(f'Попытка запуска клиента с неподходящим '
+                        'номером порта: {server_port}. '
+                        f'Допустимы адреса с 1024 до 65535. '
+                        'Клиент завершается.')
         sys.exit(1)
 
     return server_address, server_port, client_name
@@ -155,28 +163,33 @@ def main():
         transport.connect((server_address, server_port))
         send_message(transport, create_presence(client_name))
         answer = process_response_ans(get_message(transport))
-        LOGGER.info(f'Установлено соединение с сервером. Ответ сервера: {answer}')
+        LOGGER.info(f'Установлено соединение с сервером. '
+                    'Ответ сервера: {answer}')
         print(f'Установлено соединение с сервером.')
     except json.JSONDecodeError:
         LOGGER.error('Не удалось декодировать полученную Json строку.')
         sys.exit(1)
     except ServerError as error:
-        LOGGER.error(f'При установке соединения сервер вернул ошибку: {error.text}')
+        LOGGER.error(f'При установке соединения сервер '
+                     'вернул ошибку: {error.text}')
         sys.exit(1)
     except ReqFieldMissingError as missing_error:
-        LOGGER.error(f'В ответе сервера отсутствует необходимое поле {missing_error.missing_field}')
+        LOGGER.error(f'В ответе сервера отсутствует '
+                     'необходимое поле {missing_error.missing_field}')
         sys.exit(1)
     except (ConnectionRefusedError, ConnectionError):
-        LOGGER.critical(
-            f'Не удалось подключиться к серверу {server_address}:{server_port}, '
-            f'конечный компьютер отверг запрос на подключение.')
+        LOGGER.critical(f'Не удалось подключиться к '
+                        'серверу {server_address}:{server_port}, '
+                        f'конечный компьютер отверг запрос на подключение.')
         sys.exit(1)
     else:
-        receiver = threading.Thread(target=message_from_server, args=(transport, client_name))
+        receiver = threading.Thread(target=message_from_server,
+                                    args=(transport, client_name))
         receiver.daemon = True
         receiver.start()
 
-        user_interface = threading.Thread(target=user_interactive, args=(transport, client_name))
+        user_interface = threading.Thread(target=user_interactive,
+                                          args=(transport, client_name))
         user_interface.daemon = True
         user_interface.start()
         LOGGER.debug('Запущены процессы')
