@@ -34,7 +34,8 @@ def process_client_message(message, messages_list, client, clients, names):
             and SENDER in message and MESSAGE_TEXT in message:
         messages_list.append(message)
         return
-    elif ACTION in message and message[ACTION] == EXIT and ACCOUNT_NAME in message:
+    elif ACTION in message and message[ACTION] == EXIT and ACCOUNT_NAME \
+            in message:
         clients.remove(names[message[ACCOUNT_NAME]])
         names[message[ACCOUNT_NAME]].close()
         del names[message[ACCOUNT_NAME]]
@@ -48,16 +49,18 @@ def process_client_message(message, messages_list, client, clients, names):
 
 @log
 def process_message(message, names, listen_socks):
-    if message[DESTINATION] in names and names[message[DESTINATION]] in listen_socks:
+    if message[DESTINATION] in names and names[message[DESTINATION]] \
+            in listen_socks:
         send_message(names[message[DESTINATION]], message)
-        LOGGER.info(f'Отправлено сообщение пользователю '
-                    '{message[DESTINATION]} '
+        LOGGER.info(f'Отправлено сообщение '
+                    'пользователю {message[DESTINATION]} '
                     f'от пользователя {message[SENDER]}.')
-    elif message[DESTINATION] in names and names[message[DESTINATION]] not in listen_socks:
+    elif message[DESTINATION] in names and names[message[DESTINATION]] \
+            not in listen_socks:
         raise ConnectionError
     else:
-        LOGGER.error(f'Пользователь {message[DESTINATION]} '
-                     'не зарегистрирован на сервере, '
+        LOGGER.error(f'Пользователь {message[DESTINATION]} не '
+                     'зарегистрирован на сервере, '
                      f'отправка сообщения невозможна.')
 
 
@@ -109,8 +112,9 @@ def main():
         err_lst = []
         try:
             if clients:
-                recv_data_lst, send_data_lst,
-                err_lst = select.select(clients, clients, [], 0)
+                recv_data_lst, send_data_lst, err_lst = select.select(
+                    clients,
+                    clients, [], 0)
         except OSError:
             pass
 
@@ -129,8 +133,8 @@ def main():
             try:
                 process_message(i, names, send_data_lst)
             except Exception:
-                LOGGER.info(f'Связь с клиентом с именем '
-                            '{i[DESTINATION]} была потеряна')
+                LOGGER.info(f'Связь с клиентом с именем {i[DESTINATION]} '
+                            'была потеряна')
                 clients.remove(names[i[DESTINATION]])
                 del names[i[DESTINATION]]
         messages.clear()
