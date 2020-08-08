@@ -36,7 +36,8 @@ class Launcher:
         self.clients_entry.grid(row=2, column=1, padx=5, pady=5)
 
         self.start_button = Button(text="Запуск", command=lambda: self.start())
-        self.stop_button = Button(text="Закрыть все окна", command=lambda: self.stop())
+        self.stop_button = Button(text="Закрыть все окна",
+                                  command=lambda: self.stop())
 
         self.start_button.grid(row=3, column=1, padx=5, pady=5, sticky="e")
         self.stop_button.grid(row=3, column=2, padx=5, pady=5, sticky="e")
@@ -44,12 +45,16 @@ class Launcher:
         self.processes = []
 
     def start(self):
-        self.processes.append(subprocess.Popen(f'python server.py -p {self.port.get()} -a {self.host.get()}',
-                                               creationflags=subprocess.CREATE_NEW_CONSOLE))
+        self.processes.append(subprocess.Popen(
+            f'python server.py -p {self.port.get()} '
+            '-a {self.host.get()}',
+            creationflags=subprocess.CREATE_NEW_CONSOLE))
 
         for i in range(int(self.clients.get())):
-            self.processes.append(subprocess.Popen(f'python client.py {self.host.get()} {self.port.get()} -n test{i + 1}',
-                                                   creationflags=subprocess.CREATE_NEW_CONSOLE))
+            self.processes.append(subprocess.Popen(
+                f'python client.py {self.host.get()} {self.port.get()} '
+                '-n test{i + 1}',
+                creationflags=subprocess.CREATE_NEW_CONSOLE))
 
     def stop(self):
         while self.processes:
